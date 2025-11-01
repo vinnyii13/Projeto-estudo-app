@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Foco Nos Estudos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Globais */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6eb4ee 0%, #3e8ad5 100%);
+            color: #333;
+        }
+
+        /* Container Principal */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* Título */
+        h1 {
+            color: #3e8ad5;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #6eb4ee;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* TIMER DE ESTUDO */
+        .timer-section {
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px dashed #ccc;
+            border-bottom: 1px dashed #ccc;
+            margin-bottom: 30px;
+        }
+
+        #timer-display {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .timer-section p {
+             font-weight: 600;
+             margin: 5px 0 15px 0;
+             color: #3e8ad5;
+        }
+
+
+        /* Lista de Metas  */
+        .metas-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-top: 30px;
+            margin-bottom: 40px; 
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 10px;
+            margin-bottom: 10px;
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        
+        /* Estilos de checkbox e concluído (Mantidos) */
+        .meta-checkbox { margin-right: 15px; appearance: none; width: 20px; height: 20px; border: 2px solid #3e8ad5; border-radius: 4px; cursor: pointer; position: relative; }
+        .meta-checkbox:checked { background-color: #3e8ad5; border-color: #3e8ad5; }
+        .meta-checkbox:checked::after { content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; font-weight: 700; }
+        .meta-item.completed p { text-decoration: line-through; color: #888; }
+        .meta-item:hover { background-color: #eaf1f8; transform: translateY(-2px); }
+
+
+        /* Estilos Diário (Mantido) */
+        .diario-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+        .diario-section h2 { color: #3e8ad5; font-size: 1.5em; margin-bottom: 15px; }
+        #resumoDiario { width: 95%; min-height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical; font-family: 'Poppins', sans-serif; font-size: 14px; margin-bottom: 15px; }
+        #historico-diario { margin-top: 20px; padding: 15px; background-color: #eaf1f8; border-left: 5px solid #3e8ad5; text-align: left; border-radius: 5px; font-size: 0.9em; display: none; }
+        #historico-diario p { margin: 0; white-space: pre-wrap; }
+
+
+        /* Estilo dos Botões - CORES AJUSTADAS PARA CLAREZA */
+        .btn {
+            background-color: #3e8ad5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        .btn-start {
+             background-color: #17f117; /* VERDE para 'Iniciar' */
+        }
+        .btn-start:hover {
+             background-color: #12c012;
+        }
+        .btn-red {
+             background-color: #ff1008; /* VERMELHO para 'Pausar' (rodando) e 'Reiniciar' */
+        }
+        .btn-red:hover {
+             background-color: #d80c06;
+        }
+        .btn-pause {
+             background-color: #30ff07; /* AMARELO para 'Continuar' (pausado) */
+             color: #333; /* Cor do texto mais escura para melhor contraste no amarelo */
+        }
+        .btn-pause:hover {
+             background-color: #0af015;
+        }
+        .btn:hover {
+            /* Hover genérico apenas para o botão de Diário/Progresso (azul) */
+            background-color: #3275b9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎯 NOVO PROPÓSITO</h1>
+        <p>Progresso pessoal e reflexão.</p>
+
+        <div class="timer-section">
+            <p>Sessão de Foco: **2 Horas**</p>
+            <span id="timer-display">02:00:00</span>
+            <button class="btn btn-start" id="btnIniciar" onclick="iniciarTimer()">Iniciar Estudo</button>
+            <button class="btn btn-red" onclick="resetarTimer()">Reiniciar</button>
+        </div>
+
+        <ul class="metas-list" id="metasList">
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta1"> <p>Estudar.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta2"> <p>Entender.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta3"> <p>Executar.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta4"> <p>Praticar</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta5"> <p>Estudar Inglês.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta6"> <p>Resumo Do Dia.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta7"> <p>Relaxar.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta8"> <p>Ser Pai.</p> </li>
+            <li class="meta-item" onclick="toggleMeta(this)"> <input type="checkbox" class="meta-checkbox" id="meta9"> <p>Ser Marido.</p> </li>
+        </ul>
+
+        <div class="diario-section">
+            <h2>✍️ Diário do Dia (Resumo e Reflexão)</h2>
+            <textarea id="resumoDiario" placeholder="O que você aprendeu, executou ou refletiu hoje?"></textarea>
+            
+            <button class="btn" onclick="registrarDiario()">Registrar Diário</button>
+            <button class="btn" onclick="mostrarProgressoSemanal()">Ver Progresso</button>
+
+            <div id="historico-diario">
+                <strong>Último Diário Registrado (<span id="data-diario"></span>):</strong>
+                <p id="texto-diario"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let nomeUsuario = ""; 
+        
+        // VARIÁVEIS DO TIMER
+        const TEMPO_INICIAL_SEGUNDOS = 2 * 60 * 60; // 2 horas em segundos
+        let tempoRestante = TEMPO_INICIAL_SEGUNDOS;
+        let timerIntervalo;
+        let isRunning = false;
+        const display = document.getElementById('timer-display');
+        const btnIniciar = document.getElementById('btnIniciar');
+        
+        // Inicializa o display do timer na primeira carga
+        window.onload = function() {
+            // Lógica de saudação (mantida)
+            window.alert("Bem-vindo ao sistema NOVO PROPOSITO!");
+            let nomeTemporario = window.prompt("Qual o seu seu nome?");
+            if (nomeTemporario) {
+                nomeUsuario = nomeTemporario; 
+                window.alert("Bem vindo(a) ao sistema NOVO PROPOSITO, " + nomeUsuario + "! Foco nas suas metas de progresso semanal!");
+            } else {
+                window.alert("Bem vindo(a) ao sistema ao NOVO PROPOSITO! Foco nas suas metas de progresso semanal!");
+            }
+            
+            // Inicializa o display do timer e garante que o botão inicie verde
+            atualizarDisplay(tempoRestante);
+            btnIniciar.classList.add('btn-start'); 
+        };
+        
+        // Função utilitária para formatar segundos em HH:MM:SS (Mantida)
+        function formatarTempo(totalSegundos) {
+            const horas = Math.floor(totalSegundos / 3600);
+            const minutos = Math.floor((totalSegundos % 3600) / 60);
+            const segundos = totalSegundos % 60;
+
+            const pad = (num) => String(num).padStart(2, '0');
+
+            return `${pad(horas)}:${pad(minutos)}:${pad(segundos)}`;
+        }
+        
+        // Função que atualiza o elemento visual do timer (Mantida)
+        function atualizarDisplay(segundos) {
+             display.textContent = formatarTempo(segundos);
+        }
+
+        // CORREÇÃO: Lógica para alternar as cores (verde -> vermelho -> amarelo)
+        function iniciarTimer() {
+            if (isRunning) {
+                // ESTADO: Rodando -> Pausado (Botão fica AMARELO)
+                clearInterval(timerIntervalo);
+                isRunning = false;
+                btnIniciar.textContent = 'Continuar Estudo';
+                // Remove a cor de rodando (Vermelho) e adiciona a cor de pausado (Amarelo)
+                btnIniciar.classList.remove('btn-red'); 
+                btnIniciar.classList.add('btn-pause'); 
+                window.alert("Contagem pausada.");
+                return;
+            }
+
+            if (tempoRestante <= 0) {
+                 window.alert("Tempo esgotado! Por favor, reinicie para começar uma nova sessão.");
+                 return;
+            }
+
+            // ESTADO: Parado/Pausado -> Rodando (Botão fica VERMELHO)
+            isRunning = true;
+            btnIniciar.textContent = 'Pausar Estudo';
+            // Remove as cores de Parado (Verde) e Pausado (Amarelo) e adiciona a cor de rodando (Vermelho)
+            btnIniciar.classList.remove('btn-start', 'btn-pause'); 
+            btnIniciar.classList.add('btn-red');
+            
+            timerIntervalo = setInterval(atualizarTimer, 1000);
+        }
+
+        // Lógica principal da contagem (Mantida)
+        function atualizarTimer() {
+            if (tempoRestante <= 0) {
+                clearInterval(timerIntervalo);
+                isRunning = false;
+                atualizarDisplay(0);
+                btnIniciar.textContent = 'Iniciar Estudo';
+                // Fim do tempo: volta para a cor de Iniciar (Verde)
+                btnIniciar.classList.remove('btn-red', 'btn-pause');
+                btnIniciar.classList.add('btn-start');
+                window.alert("🚨 FIM DA SESSÃO DE FOCO! Hora de descansar ou registrar o progresso.");
+                return;
+            }
+            
+            tempoRestante--;
+            atualizarDisplay(tempoRestante);
+        }
+
+        // CORREÇÃO: Reseta o timer para 2 horas e garante que o botão volte ao VERDE
+        function resetarTimer() {
+            clearInterval(timerIntervalo); 
+            isRunning = false;
+            tempoRestante = TEMPO_INICIAL_SEGUNDOS;
+            atualizarDisplay(tempoRestante);
+            btnIniciar.textContent = 'Iniciar Estudo';
+            // Garante que todas as cores de estado sejam removidas e volte para a cor de Iniciar (Verde)
+            btnIniciar.classList.remove('btn-red', 'btn-pause');
+            btnIniciar.classList.add('btn-start');
+        }
+
+        
+        // Funções de Metas e Diário (Mantidas)
+        function toggleMeta(element) {
+            const checkbox = element.querySelector('.meta-checkbox');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                element.classList.add('completed');
+            } else {
+                element.classList.remove('completed');
+            }
+        }
+
+        function mostrarProgressoSemanal() {
+            const listaMetas = document.getElementById('metasList');
+            const todosItens = listaMetas.querySelectorAll('.meta-item');
+            
+            let metasTotais = todosItens.length;
+            let metasConcluidas = 0;
+
+            todosItens.forEach(item => {
+                if (item.classList.contains('completed')) {
+                    metasConcluidas++;
+                }
+            });
+
+            let percentual = metasTotais > 0 ? (metasConcluidas / metasTotais) * 100 : 0;
+            
+            let mensagem = "Parabéns, ";
+
+            if (nomeUsuario) {
+                mensagem += nomeUsuario;
+            } else {
+                mensagem += "usuário(a)";
+            }
+            
+            mensagem += `!\nSeu progresso semanal é de: ${metasConcluidas} de ${metasTotais} metas (${percentual.toFixed(0)}%).`;
+            
+            if (percentual === 100) {
+                 mensagem += "\nObjetivo Semanal COMPLETO! 🎉 Excelente trabalho!";
+            } else if (percentual > 50) {
+                 mensagem += "\nÓtimo progresso! Mantenha o foco para completar o restante.";
+            } else if (percentual > 0) {
+                 mensagem += "\nVocê começou bem! Continue avançando nas suas tarefas. 💪";
+            } else {
+                 mensagem += "\nVocê ainda não concluiu nenhuma meta. Está na hora de começar! 💪";
+            }
+
+            window.alert(mensagem);
+        }
+
+        function registrarDiario() {
+            const campoDiario = document.getElementById('resumoDiario');
+            const texto = campoDiario.value.trim(); 
+
+            if (texto === "") {
+                window.alert("O diário não pode estar vazio! Escreva sua reflexão antes de registrar.");
+                return;
+            }
+
+            const dataAtual = new Date().toLocaleDateString('pt-BR');
+
+            document.getElementById('data-diario').textContent = dataAtual;
+            document.getElementById('texto-diario').textContent = texto;
+            document.getElementById('historico-diario').style.display = 'block';
+
+            window.alert("Diário registrado com sucesso para o dia " + dataAtual + "!");
+            campoDiario.value = "";
+        }
+    </script>
+</body>
+</html> 
