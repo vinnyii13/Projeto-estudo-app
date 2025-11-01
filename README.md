@@ -35,7 +35,7 @@ Este projeto é um aplicativo **Single File** (Arquivo Único) e não requer nen
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [LINK_DO_SEU_REPOSITÓRIO]
+    git clone [https://github.com/vinnyii13/Projeto-estudo-app]
     ```
 2.  **Abra o Arquivo:** Simplesmente abra o arquivo `index.html` (ou o nome que você deu ao seu arquivo) no seu navegador.
     ```bash
